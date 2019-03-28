@@ -9,3 +9,6 @@ learn structures!
 how does checkout works ?
 
 git reset HEAD <file>可以把暂存区的修改撤销掉（unstage），重新放回工作区
+
+
+git checkout -- readme.txt  放弃工作区的修改
