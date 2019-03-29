@@ -8,7 +8,72 @@ learn structures!
 
 how does checkout works ?
 
+打开本地仓库之前需要先使用cd命令切换到当前的repo文件下
+
+创建一个版本库非常简单，首先，选择一个合适的地方，创建一个空目录：
+$ mkdir learngit
+$ cd learngit
+$ pwd
+/Users/michael/learngit
+pwd命令用于显示当前目录。在我的Mac上，这个仓库位于/Users/michael/learngit
+第二步，通过git init命令把这个目录变成Git可以管理的仓库：
+$ git init
+Initialized empty Git repository in /Users/michael/learngit/.git/
+
+git init 本地库初始化
+git status 查看当前状态
+
+git add filename 添加文件
+git log 查看历史记录
+
+git reflog 记录曾使用过的命令  可以用于查看可回退的版本
+
+git reset --hard  哈希索引值/HEAD^2 回退版本
+git commit -m "commit message" (filename)   缓存区的文件添加到仓库中
+
+
+git diff filename 对比文件不同之处
+
+工作区在本地
+版本库分为 stage暂存区 和  master分支(自动创建)
+master分支有一个指针叫HEAD
+
+add & commit 命令用于提交数据
+git管理的是修改而非文件本身
+
+git checkout -- readme.txt  放弃工作区的修改（即将工作区的文件同步到与暂存区或者版本库一致，如果最近一次add了，就用暂存区的去同步，如果commit了就用版本库的去同步）
+注意 -- 和  filename 之间必须有空格
+
 git reset HEAD <file>可以把暂存区的修改撤销掉（unstage），重新放回工作区
 
+错误修改三种：
+一、只恢复工作区的，使用git checkout -- filename命令
+二、错误已经提交到暂存区，可以先使用git reset head filename的命令撤销暂存区修改，再使用checkout命令恢复工作区修改（当然直接使用checkout命令也可以撤销工作区的修改）
+三、已经提交到本地版本库，则使用版本回退reset（哈希索引）去回退版本，前提是未提交到远程库,然后执行21命令
 
-git checkout -- readme.txt  放弃工作区的修改
+rm filename  删除文件
+在暂存区删除后，如果想版本库中也删除，则需要commit
+
+创建远程仓库
+先cd ~到主目录下
+若没有.ssh文件，则执行如下命令$ ssh-keygen -t rsa -C "735591266@qq.com"
+若有.ssh文件，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步
+
+如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
+登陆GitHub，打开“Account settings”，“SSH Keys”页面：
+然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容
+点“Add Key”，你就应该看到已经添加的Key
+
+在本地的learngit仓库下运行命令：
+$ git remote add origin git@github.com:yourgithubname/localREPO.git
+
+把本地库的所有内容推送到远程库上：
+$ git push -u origin master
+
+把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
+从现在起，只要本地作了提交，就可以通过命令：
+$ git push origin master
+把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！
+第一次出现警告直接输入yes回车即可
+
