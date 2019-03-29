@@ -65,7 +65,7 @@ rm filename  删除文件
 点“Add Key”，你就应该看到已经添加的Key
 
 在本地的learngit仓库下运行命令：
-$ git remote add origin git@github.com:yourgithubname/localREPO.git
+$ git remote add origin git://github.com/yourgithubname/localREPO.git
 
 把本地库的所有内容推送到远程库上：
 $ git push -u origin master
