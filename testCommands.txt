@@ -104,14 +104,16 @@ git branch命令会列出所有分支，当前分支前面会标一个*号。
 把dev分支的工作成果合并到master分支上：$ git merge dev
 git merge命令用于合并指定分支到当前分支。合并后，再查看readme.txt的内容，就可以看到，和dev分支的最新提交是完全一样的。
 
-<<<<<<< HEAD
 master
 
 
 
 删除分支：git branch -d <name>
 
+解决冲突 多个分支修改了统一文件的代码块或者文件名，则必须手动修改一致，否则无法合并。
+可以用vim打开文件，删除或修改冲突代码。然后add 和commit 之后才能够合并分支。然后再push。
 
+用git log --graph命令可以看到分支合并图。
 
 
 
