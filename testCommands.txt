@@ -77,3 +77,11 @@ $ git push origin master
 把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！
 第一次出现警告直接输入yes回车即可
 
+回到终端，进行SSH确认连接
+输入命令：ssh -T Git@github.com
+
+若出错请按照下面链接解决
+https://www.cnblogs.com/gzdaijie/p/5186516.html
+
+
+
