@@ -116,4 +116,197 @@ master
 用git log --graph命令可以看到分支合并图。
 
 
+$ git merge --no-ff -m "merge with no-ff" dev  不删除分支的合并
+
+
+Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+$ git stash
+现在，用git status查看工作区，就是干净的（除非有没有被Git管理的文件），因此可以放心地创建分支来修复bug
+首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支
+$ git checkout master
+$ git checkout -b issue-101
+
+$ git stash list查看工作现场
+工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法：
+一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+另一种方式是用git stash pop，恢复的同时把stash内容也删了：
+
+Bug分支
+阅读: 349093
+软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，由于分支是如此的强大，所以，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。
+
+当你接到一个修复一个代号101的bug的任务时，很自然地，你想创建一个分支issue-101来修复它，但是，等等，当前正在dev上进行的工作还没有提交：
+
+$ git status
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   readme.txt
+并不是你不想提交，而是工作只进行到一半，还没法提交，预计完成还需1天时间。但是，必须在两个小时内修复该bug，怎么办？
+
+幸好，Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+
+$ git stash
+Saved working directory and index state WIP on dev: f52c633 add merge
+现在，用git status查看工作区，就是干净的（除非有没有被Git管理的文件），因此可以放心地创建分支来修复bug。
+
+首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支：
+
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git checkout -b issue-101
+Switched to a new branch 'issue-101'
+现在修复bug，需要把“Git is free software ...”改为“Git is a free software ...”，然后提交：
+
+$ git add readme.txt 
+$ git commit -m "fix bug 101"
+[issue-101 4c805e2] fix bug 101
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+修复完成后，切换到master分支，并完成合并，最后删除issue-101分支：
+
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git merge --no-ff -m "merged bug fix 101" issue-101
+Merge made by the 'recursive' strategy.
+ readme.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+太棒了，原计划两个小时的bug修复只花了5分钟！现在，是时候接着回到dev分支干活了！
+
+$ git checkout dev
+Switched to branch 'dev'
+
+$ git status
+On branch dev
+nothing to commit, working tree clean
+工作区是干净的，刚才的工作现场存到哪去了？用git stash list命令看看：
+
+$ git stash list
+stash@{0}: WIP on dev: f52c633 add merge
+工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法：
+
+一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+
+另一种方式是用git stash pop，恢复的同时把stash内容也删了：
+
+$ git stash pop
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   readme.txt
+
+Dropped refs/stash@{0} (5d677e2ee266f39ea296182fb2354265b91b3b2a)
+再用git stash list查看，就看不到任何stash内容了：
+
+$ git stash list
+你可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+$ git stash apply stash@{0}
+
+
+<p>
+    1. master 上面发布的是A的1.0版本
+</p>
+<p>
+    2、dev 上开发的是A的2.0版本
+</p>
+<p>
+    3、这时，用户反映 1.0版本存在漏洞，有人利用这个漏洞开外挂
+</p>
+<p>
+    4、需要从dev切换到master去填这个漏洞，正常必须先提交dev目前的工作，才能切换（必须提交，否则无法切换，只add也不行，因为之前我们说过，checkout会覆盖本地的更改）
+</p>
+<p>
+    5、而dev的工作还未完成，不想提交，所以先把dev的工作stash一下。然后切换到master
+</p>
+<p>
+    6、在master建立分支issue101并切换.
+</p>
+<p>
+    7、在issue101上修复漏洞。
+</p>
+<p>
+    8、修复后，在master上合并issue101
+</p>
+<p>
+    9、切回dev，恢复原本工作，继续工作。
+</p>
+<p>
+    <br/>
+</p>
+<p>
+    对应的操作：
+</p>
+<p>
+    1.  git stash  ： 保存dev当前的工作现场
+</p>
+<p>
+    2.  git checkout master ： 切换到master
+</p>
+<p>
+    3.  git checkout -b issue-101 ：创建专门用于解决bug的 issue101分支
+</p>
+<p>
+    4.  git add readme.txt ： 解决bug后，添加到暂存区
+</p>
+<p>
+    5.  git commit -m "fix bug 101" ： 提交
+</p>
+<p>
+    6.  git checkout master ：切回到master
+</p>
+<p>
+    7.  git merge --no-ff -m "merged bug fix 101" issue-101 ：合并解决bug的分支
+</p>
+<p>
+    8.  git branch -d issue-101 ： 删除用于解决bug的分支
+</p>
+<p>
+    9.  git checkout dev ：切回到dev分支
+</p>
+<p>
+    10. git stash apply ：恢复工作现场
+</p>
+<p>
+    11. git stash drop    ：删除工作现场内容
+</p>
+<p>
+    12. 10和12两步也可以直接用git stash pop恢复的同时把stash内容也删了
+</p>
+<p>
+    <br/>
+</p>
+
+$ git branch -D feature-vulca   删除未合并的分支
+
+git remote (-v)   查看远程库
+
+推送分支，就是把该分支上的所有本地提交推送到远程库。推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上：
+
+$ git push origin master
+如果要推送其他分支，比如dev，就改成：
+$ git push origin dev
+但是，并不是一定要把本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？
+master分支是主分支，因此要时刻与远程同步；
+dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
+bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
+feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发
 
