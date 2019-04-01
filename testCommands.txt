@@ -1,3 +1,6 @@
+注：内容来自廖雪峰老师网站教程
+
+
 this is a pure test txt with no other use!
 maybe i will success this time!
 
@@ -301,7 +304,7 @@ git remote (-v)   查看远程库
 
 推送分支，就是把该分支上的所有本地提交推送到远程库。推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上：
 
-$ git push origin master
+$ git puc++ 和sh origin master
 如果要推送其他分支，比如dev，就改成：
 $ git push origin dev
 但是，并不是一定要把本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？
@@ -309,4 +312,33 @@ master分支是主分支，因此要时刻与远程同步；
 dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
 bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
 feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发
+
+
+
+$ git tag v1.0
+可以用命令git tag查看所有标签：
+$ git tag
+历史版本打标签$ git tag v0.9 f52c633   （先$ git log --pretty=oneline --abbrev-commit）
+可以用git show <tagname>查看标签信息
+
+还可以创建带有说明的标签，用-a指定标签名，-m指定说明文字：
+$ git tag -a v0.1 -m "version 0.1 released" 1094adb
+
+
+如果要推送某个标签到远程，使用命令git push origin <tagname>：
+一次性推送全部尚未推送到远程的本地标签：
+$ git push origin --tags
+
+如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+$ git tag -d v0.9
+然后，从远程删除。删除命令也是push，但是格式如下：
+$ git push origin :refs/tags/v0.9
+
+
+
+
+
+
+
+
 
